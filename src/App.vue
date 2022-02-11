@@ -8,6 +8,8 @@
             <Freetext :fieldname="lastName" :text="text" />
             <Stat statname='str'/>
             <Stat statname='SMI'/>
+            <Advantage :advantage=true name='Stærke tænder' value='1'/>
+            <Advantage :advantage=false name='Inkompetent' value='1'/>
 
             <div class="col-12">
               <label for="username" class="form-label">Username</label>
@@ -149,10 +151,12 @@
 <script>
 import Freetext from './components/Freetext.vue'
 import Stat from './components/Stat.vue'
+import Advantage from './components/Advantage.vue'
+
 export default {
   name: 'App',
   components: {
-    Freetext, Stat
+    Freetext, Stat, Advantage
   },
   data () {
     return {

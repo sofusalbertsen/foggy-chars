@@ -7,7 +7,12 @@
 
 <script>
 export default {
-  props: ['statname', 'number', 'group']
+  props: ['statname', 'number', 'group'],
+  data () {
+    return {
+
+    }
+  }
 }
 </script>
 

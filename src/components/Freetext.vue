@@ -14,6 +14,11 @@ export default {
   props: ['fieldname', 'text'],
   created () {
     console.log(this.text)
+  },
+  data () {
+    return {
+
+    }
   }
 }
 </script>

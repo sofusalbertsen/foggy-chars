@@ -22,6 +22,7 @@
     <div class="row">
       <Up v-model:upPoints="upValue" />
     </div>
+    <Hp v-model:stats="stats"/>
 </div>
 </div>
 </template>
@@ -31,11 +32,12 @@ import Freetext from './components/Freetext.vue'
 import Stat from './components/Stat.vue'
 import Advantage from './components/Advantage.vue'
 import Up from './components/Up.vue'
+import Hp from './components/Hp.vue'
 
 export default {
   name: 'App',
   components: {
-    Freetext, Stat, Advantage, Up
+    Freetext, Stat, Advantage, Up, Hp
   },
   data () {
     return {

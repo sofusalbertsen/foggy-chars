@@ -15,7 +15,8 @@ export default {
     name: String,
     value: Number,
     upRef: Number,
-    advantage: Boolean
+    advantage: Boolean,
+    chosen: Boolean
   },
   created () {
 

@@ -1,26 +1,32 @@
 <template>
-            <div class="col-md-2">
-              <label :for="statname" class="form-label"> {{statname}} </label>
-              <input type="number" class="form-control" :id="statname" :value="value" @input='statChange($event.target.value)'>
-            </div>
+<div class="col-md-2">
+  <div class="input-group mb-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="inputGroup-sizing-default" :title="stat.longName"> {{stat.name}}</span>
+    </div>
+    <input type="number" class="form-control mb-3" :id="stat.statname" :value="value" @input='statChange($event.target.value)'>
+  </div>
+</div>
 </template>
 
 <script>
 export default {
   props: {
-    statname: String,
-    statValue: Number,
     upRef: Number,
-    stat: Object
+    stat: {
+      name: String,
+      longName: String,
+      statValue: Number
+    }
   },
   data () {
     return {
-      value: this.$props.statValue,
+      value: this.$props.stat.statValue,
       valueRef: null
     }
   },
   created () {
-    console.log(this.$props.stat.name)
+    console.log(this.$props.stat.longName)
     this.valueRef = this.value
     // console.log(this.value)
     // console.log(this.$props.statValue)

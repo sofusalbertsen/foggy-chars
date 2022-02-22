@@ -12,7 +12,6 @@
 export default {
   props: ['fieldname', 'text'],
   created () {
-    console.log('Freetext: ' + this.text)
   },
   data () {
     return {

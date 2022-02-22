@@ -4,8 +4,8 @@
       <input type="checkbox" class="form-check-input mt-0" :id="name" :value="value" :checked="checked" @click='statChange($event.target.value)'>
     </div>
       <label class="form-control" :for="name"> {{name}} </label>
-      <button v-if="this.advantage" type="button" class="btn btn-outline-secondary" data-toggle="tooltip" :title="name + ' koster ' + value + ' UP'">?</button>
-      <button v-if="!this.advantage" type="button" class="btn btn-outline-secondary" data-toggle="tooltip" :title="name + ' giver ' + value + ' UP'">?</button>
+      <button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" :title="tooltip">?</button>
+
 </div>
 </template>
 
@@ -20,6 +20,11 @@ export default {
   },
   created () {
 
+  },
+  computed: {
+    tooltip () {
+      return this.$props.advantage ? (this.$props.name + ' koster ' + this.$props.value + ' UP') : (this.$props.name + ' giver ' + this.$props.value + ' UP')
+    }
   },
   methods: {
     statChange (value) {

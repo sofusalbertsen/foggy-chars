@@ -1,23 +1,47 @@
 <template>
   <div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center"></div>
-    <span>{{ title }}</span>
-    <span v-if="showCounter" class="badge bg-secondary"> {{ selectedCount }}/{{ maxCount }} </span>
-  </div>
-  <div class="card-body">
-    <Advantage
-      v-for="option in options"
-      :key="option.name"
-      :name="option.name"
-      :value="option.cost"
-      :advantage="!isDisadvantage"
-      :chosen="isChosen(option.name)"
-    />
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span>{{ title }}</span>
+      <span v-if="showCounter" class="badge bg-secondary">
+        {{ selectedCount }}/{{ maxCount }}
+      </span>
+    </div>
+
+    <!-- Selected advantages collapsable section -->
+    <div v-if="hasSelectedAdvantages" class="selected-advantages">
+      <div class="selected-header" @click="toggleSelectedSection">
+        <span>Selected {{ isDisadvantage ? 'Disadvantages' : 'Advantages' }}</span>
+        <i :class="selectedSectionOpen ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+      </div>
+      <div v-if="selectedSectionOpen" class="selected-list">
+        <Advantage
+          v-for="option in selectedOptions"
+          :key="option.name"
+          :name="option.name"
+          :value="option.cost"
+          :advantage="!isDisadvantage"
+          :chosen="true"
+        />
+      </div>
+    </div>
+
+    <div class="card-body scrollable-container">
+      <div class="advantage-list">
+        <Advantage
+          v-for="option in unselectedOptions"
+          :key="option.name"
+          :name="option.name"
+          :value="option.cost"
+          :advantage="!isDisadvantage"
+          :chosen="false"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useCharacterStore } from '../stores/characterStore'
 import Advantage from './Advantage.vue'
 
@@ -51,10 +75,32 @@ export default {
 
   setup(props) {
     const characterStore = useCharacterStore()
+    const selectedSectionOpen = ref(true)
 
     const isChosen = (name) => {
       return characterStore.selectedAdvantages.some((adv) => adv.name === name)
     }
+
+    const selectedOptions = computed(() => {
+      return props.options.filter((option) =>
+        characterStore.selectedAdvantages.some(
+          (adv) => adv.name === option.name && adv.advantage === !props.isDisadvantage,
+        ),
+      )
+    })
+
+    const unselectedOptions = computed(() => {
+      return props.options.filter(
+        (option) =>
+          !characterStore.selectedAdvantages.some(
+            (adv) => adv.name === option.name && adv.advantage === !props.isDisadvantage,
+          ),
+      )
+    })
+
+    const hasSelectedAdvantages = computed(() => {
+      return selectedOptions.value.length > 0
+    })
 
     const selectedCount = computed(() => {
       if (props.isDisadvantage) {
@@ -65,10 +111,19 @@ export default {
         : characterStore.standardAdvantages.length
     })
 
+    const toggleSelectedSection = () => {
+      selectedSectionOpen.value = !selectedSectionOpen.value
+    }
+
     return {
       characterStore,
       isChosen,
       selectedCount,
+      selectedOptions,
+      unselectedOptions,
+      hasSelectedAdvantages,
+      selectedSectionOpen,
+      toggleSelectedSection,
     }
   },
 }
@@ -77,5 +132,39 @@ export default {
 <style scoped>
 .card {
   margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-body.scrollable-container {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-top: 0;
+}
+
+.advantage-list {
+  padding-top: 10px;
+}
+
+.selected-advantages {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  background-color: #f8f9fa;
+}
+
+.selected-header {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+}
+
+.selected-header:hover {
+  background-color: #e9ecef;
+}
+
+.selected-list {
+  padding: 0.5rem 1rem;
 }
 </style>

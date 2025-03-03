@@ -13,23 +13,24 @@
     <div class="row mb-3">
       <div class="col-md-8">
         <div class="row">
-          <Stat 
-            v-for="stat in characterStore.stats" 
-            :key="stat.name" 
-            :stat="stat" 
-          />
+          <Stat v-for="stat in characterStore.stats" :key="stat.name" :stat="stat" />
         </div>
       </div>
       <div class="col-md-4">
-        <div class="card">
-          <div class="card-header">
-            Character Stats
-          </div>
-          <div class="card-body">
-            <div class="row">
-              <div class="col">HP:</div>
-              <div class="col"><Hp /></div>
+        <div class="row">
+          <div class="col-12 mb-3">
+            <div class="card">
+              <div class="card-header">Character Stats</div>
+              <div class="card-body">
+                <div class="row">
+                  <div class="col">HP:</div>
+                  <div class="col"><Hp /></div>
+                </div>
+              </div>
             </div>
+          </div>
+          <div class="col-12">
+            <Initiative />
           </div>
         </div>
       </div>
@@ -39,12 +40,12 @@
         <div class="card">
           <div class="card-header">Advantages</div>
           <div class="card-body">
-            <Advantage 
-              v-for="adv in characterStore.advantages.filter(a => a.advantage)" 
-              :key="adv.name" 
-              :name="adv.name" 
-              :value="adv.value" 
-              :advantage="adv.advantage" 
+            <Advantage
+              v-for="adv in characterStore.advantages.filter((a) => a.advantage)"
+              :key="adv.name"
+              :name="adv.name"
+              :value="adv.value"
+              :advantage="adv.advantage"
               :chosen="adv.chosen"
             />
           </div>
@@ -54,11 +55,11 @@
         <div class="card">
           <div class="card-header">Disadvantages</div>
           <div class="card-body">
-            <Advantage 
-              v-for="adv in characterStore.advantages.filter(a => !a.advantage)" 
-              :key="adv.name" 
-              :name="adv.name" 
-              :value="adv.value" 
+            <Advantage
+              v-for="adv in characterStore.advantages.filter((a) => !a.advantage)"
+              :key="adv.name"
+              :name="adv.name"
+              :value="adv.value"
               :advantage="adv.advantage"
               :chosen="adv.chosen"
             />
@@ -70,12 +71,13 @@
 </template>
 
 <script>
-import { useCharacterStore } from './stores/characterStore';
-import Up from './components/Up.vue';
-import Stat from './components/Stat.vue';
-import Hp from './components/Hp.vue';
-import Freetext from './components/Freetext.vue';
-import Advantage from './components/Advantage.vue';
+import { useCharacterStore } from './stores/characterStore'
+import Up from './components/Up.vue'
+import Stat from './components/Stat.vue'
+import Hp from './components/Hp.vue'
+import Freetext from './components/Freetext.vue'
+import Advantage from './components/Advantage.vue'
+import Initiative from './components/Initiative.vue'
 
 export default {
   components: {
@@ -83,15 +85,16 @@ export default {
     Stat,
     Hp,
     Freetext,
-    Advantage
+    Advantage,
+    Initiative,
   },
   setup() {
-    const characterStore = useCharacterStore();
-    
+    const characterStore = useCharacterStore()
+
     return {
-      characterStore
-    };
-  }
+      characterStore,
+    }
+  },
 }
 </script>
 

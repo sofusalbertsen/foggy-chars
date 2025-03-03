@@ -35,49 +35,45 @@
         </div>
       </div>
     </div>
+
+    <!-- Updated advantages section -->
     <div class="row mb-3">
       <div class="col-md-6">
-        <div class="card">
-          <div class="card-header">Advantages</div>
-          <div class="card-body">
-            <Advantage
-              v-for="adv in characterStore.advantages.filter((a) => a.advantage)"
-              :key="adv.name"
-              :name="adv.name"
-              :value="adv.value"
-              :advantage="adv.advantage"
-              :chosen="adv.chosen"
-            />
-          </div>
-        </div>
+        <AdvantageSelector
+          title="Standard Fordele"
+          :options="standardAdvantages"
+          :showCounter="true"
+          :maxCount="characterStore.maxAdvantages"
+        />
       </div>
       <div class="col-md-6">
-        <div class="card">
-          <div class="card-header">Disadvantages</div>
-          <div class="card-body">
-            <Advantage
-              v-for="adv in characterStore.advantages.filter((a) => !a.advantage)"
-              :key="adv.name"
-              :name="adv.name"
-              :value="adv.value"
-              :advantage="adv.advantage"
-              :chosen="adv.chosen"
-            />
-          </div>
-        </div>
+        <AdvantageSelector
+          title="Ulemper"
+          :options="standardDisadvantages"
+          :isDisadvantage="true"
+        />
+      </div>
+    </div>
+
+    <!-- Special advantages section -->
+    <div class="row mb-3">
+      <div class="col-md-12">
+        <AdvantageSelector title="Særlige Fordele" :options="specialAdvantages" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { computed } from 'vue'
 import { useCharacterStore } from './stores/characterStore'
+import { getStandardAdvantages, getSpecialAdvantages } from './data/advantages'
 import Up from './components/Up.vue'
 import Stat from './components/Stat.vue'
 import Hp from './components/Hp.vue'
 import Freetext from './components/Freetext.vue'
-import Advantage from './components/Advantage.vue'
 import Initiative from './components/Initiative.vue'
+import AdvantageSelector from './components/AdvantageSelector.vue'
 
 export default {
   components: {
@@ -85,14 +81,30 @@ export default {
     Stat,
     Hp,
     Freetext,
-    Advantage,
     Initiative,
+    AdvantageSelector,
   },
+
   setup() {
     const characterStore = useCharacterStore()
 
+    const standardAdvantages = computed(() => {
+      return getStandardAdvantages().filter((adv) => adv.advantage)
+    })
+
+    const standardDisadvantages = computed(() => {
+      return getStandardAdvantages().filter((adv) => !adv.advantage)
+    })
+
+    const specialAdvantages = computed(() => {
+      return getSpecialAdvantages()
+    })
+
     return {
       characterStore,
+      standardAdvantages,
+      standardDisadvantages,
+      specialAdvantages,
     }
   },
 }

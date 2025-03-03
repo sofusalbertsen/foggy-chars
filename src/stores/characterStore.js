@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { advantages, getAdvantage } from '../data/advantages'
 
 export const useCharacterStore = defineStore('character', {
   state: () => ({
@@ -20,13 +21,20 @@ export const useCharacterStore = defineStore('character', {
       age: '',
       // Add any other character info fields here
     },
-    advantages: [
-      { name: 'Stærk', value: 5, advantage: true, chosen: false },
-      { name: 'Svag', value: 5, advantage: false, chosen: false },
-      // Add more advantages/disadvantages as needed
-    ],
-    initiativeModifier: 0, // Initiative modifier (InIM)
-    // ... existing state properties
+    // We'll replace this with a selectedAdvantages array
+    selectedAdvantages: [],
+    maxAdvantages: 6, // Maximum number of standard advantages a character can have
+    initiativeModifier: 0,
+    // Stats modifiers that can be affected by advantages
+    statsModifiers: {
+      skadeBonus: 0,
+      hp_bonus: 0,
+      fat_bonus: 0,
+      mmm_bonus: 0,
+      initiative_bonus: 0,
+      bite_damage: 0,
+      poison_resistance: 0,
+    },
   }),
 
   getters: {
@@ -39,7 +47,7 @@ export const useCharacterStore = defineStore('character', {
           hp += stat.statValue
         }
       })
-      return hp
+      return hp + state.statsModifiers.hp_bonus
     },
 
     getStat: (state) => (name) => {
@@ -122,6 +130,26 @@ export const useCharacterStore = defineStore('character', {
       if (specialChance) return `1d${dice} (75% for 1)`
       return mod > 0 ? `1d${dice}+${mod}` : `1d${dice}`
     },
+
+    // New getters for advantages
+    standardAdvantages: (state) => {
+      return state.selectedAdvantages.filter((adv) => adv.advantage && adv.category === 'standard')
+    },
+
+    specialAdvantages: (state) => {
+      return state.selectedAdvantages.filter((adv) => adv.advantage && adv.category === 'special')
+    },
+
+    standardDisadvantages: (state) => {
+      return state.selectedAdvantages.filter((adv) => !adv.advantage)
+    },
+
+    canSelectMoreAdvantages: (state) => {
+      const standardAdvCount = state.selectedAdvantages.filter(
+        (adv) => adv.advantage && adv.category === 'standard',
+      ).length
+      return standardAdvCount < state.maxAdvantages
+    },
   },
 
   actions: {
@@ -137,11 +165,39 @@ export const useCharacterStore = defineStore('character', {
     },
 
     toggleAdvantage(name) {
-      const advantage = this.advantages.find((adv) => adv.name === name)
-      if (advantage) {
-        advantage.chosen = !advantage.chosen
-        const pointChange = advantage.advantage ? -advantage.value : advantage.value
-        this.modifyUP(advantage.chosen ? pointChange : -pointChange)
+      const existingIndex = this.selectedAdvantages.findIndex((adv) => adv.name === name)
+
+      if (existingIndex !== -1) {
+        // Already selected, so remove it
+        const advantage = this.selectedAdvantages[existingIndex]
+        const pointChange = advantage.advantage ? -advantage.cost : advantage.cost
+        this.modifyUP(-pointChange)
+        this.selectedAdvantages.splice(existingIndex, 1)
+        this.updateStatsFromAdvantages()
+      } else {
+        // Not selected yet, so add it if possible
+        const advantage = getAdvantage(name)
+        if (advantage) {
+          // Check if we can add more advantages (only for standard advantages)
+          if (
+            !advantage.advantage ||
+            advantage.category !== 'standard' ||
+            this.canSelectMoreAdvantages
+          ) {
+            this.selectedAdvantages.push({
+              name: advantage.name,
+              cost: advantage.cost,
+              advantage: advantage.advantage,
+              category: advantage.category,
+              description: advantage.description,
+              chosen: true,
+            })
+
+            const pointChange = advantage.advantage ? advantage.cost : -advantage.cost
+            this.modifyUP(pointChange)
+            this.updateStatsFromAdvantages()
+          }
+        }
       }
     },
 
@@ -203,6 +259,43 @@ export const useCharacterStore = defineStore('character', {
       }
 
       return result
+    },
+
+    // New method to update character stats based on selected advantages
+    updateStatsFromAdvantages() {
+      // Reset all modifiers
+      this.statsModifiers = {
+        skadeBonus: 0,
+        hp_bonus: 0,
+        fat_bonus: 0,
+        mmm_bonus: 0,
+        initiative_bonus: 0,
+        bite_damage: 0,
+        poison_resistance: 0,
+      }
+
+      // Apply modifiers from each advantage
+      this.selectedAdvantages.forEach((adv) => {
+        switch (adv.name) {
+          case 'Stærk':
+            this.statsModifiers.skadeBonus += 1
+            break
+          case 'Svag':
+            this.statsModifiers.skadeBonus -= 1
+            break
+          case 'Stærke tænder':
+            // Check if character is a lizard/has bite attack
+            if (this.characterInfo.race === 'Øglemand') {
+              this.statsModifiers.bite_damage += 1
+            }
+            break
+          case 'Hollow Bones':
+            this.statsModifiers.hp_bonus -= 3 // Approximating 1d6
+            this.statsModifiers.initiative_bonus += 2
+            break
+          // Add more cases for other advantages that affect stats
+        }
+      })
     },
   },
 })

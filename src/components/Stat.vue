@@ -1,47 +1,61 @@
 <template>
-<div class="col-md-2">
-  <div class="input-group mb-3">
-    <div class="input-group-prepend">
-      <span class="input-group-text" id="inputGroup-sizing-default" :title="stat.longName"> {{stat.name}}</span>
+  <div class="col-md-2">
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="inputGroup-sizing-default" :title="stat.longName">
+          {{ stat.name }}</span
+        >
+      </div>
+      <input
+        type="number"
+        class="form-control mb-3"
+        :id="stat.statname"
+        v-model="value"
+        @input="statChange"
+      />
     </div>
-    <input type="number" class="form-control mb-3" :id="stat.statname" :value="value" @input='statChange($event.target.value)'>
   </div>
-</div>
 </template>
 
 <script>
+import { ref, watch } from 'vue'
+import { useCharacterStore } from '../stores/characterStore'
+
 export default {
   props: {
-    upRef: Number,
     stat: {
-      name: String,
-      longName: String,
-      statValue: Number
-    }
+      type: Object,
+      required: true,
+    },
   },
-  data () {
+  setup(props) {
+    const characterStore = useCharacterStore()
+    const value = ref(props.stat.statValue)
+    const valueRef = ref(props.stat.statValue)
+
+    const statChange = () => {
+      const subtractionPoints = valueRef.value - value.value
+      valueRef.value = value.value
+      characterStore.modifyUP(subtractionPoints)
+      characterStore.updateStat(props.stat.name, value.value)
+    }
+
+    watch(
+      () => props.stat.statValue,
+      (newVal) => {
+        value.value = newVal
+        valueRef.value = newVal
+      },
+    )
+
     return {
-      value: this.$props.stat.statValue,
-      valueRef: null
+      value,
+      valueRef,
+      statChange,
+      characterStore,
     }
   },
-  created () {
-    console.log(this.$props.stat.longName)
-    this.valueRef = this.value
-    // console.log(this.value)
-    // console.log(this.$props.statValue)
-  },
-  methods: {
-    statChange (value) {
-      this.value = value
-      var substractionPoints = this.valueRef - value
-      this.valueRef = value
-      this.$emit('modifyUP', substractionPoints)
-    }
-  }
 }
 </script>
 
-<style>
-
-</style>
+<style></style>

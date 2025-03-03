@@ -1,38 +1,19 @@
 <template>
-  <div>{{calculateHP}}</div>
+  <div>{{ characterStore.calculateHP }}</div>
 </template>
 
 <script>
+import { useCharacterStore } from '../stores/characterStore'
+
 export default {
-  props: {
-    stats: Array
-  },
-  data () {
+  setup() {
+    const characterStore = useCharacterStore()
+
     return {
-      baseHp: null,
-      modifiers: [],
-      hp: null
+      characterStore,
     }
   },
-  created () {
-    console.log(this.stats)
-  },
-  computed: {
-    calculateHP () {
-      var out = 0
-      this.stats.forEach(stat => {
-        if (stat.name === 'UDH') {
-          out += (stat.statValue * 2)
-        } else if (stat.name === 'STØ') {
-          out += stat.statValue
-        }
-      })
-      return out
-    }
-  }
 }
 </script>
 
-<style>
-
-</style>
+<style></style>

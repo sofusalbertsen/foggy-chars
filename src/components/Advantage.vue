@@ -1,56 +1,63 @@
 <template>
-<div class="input-group mb-1">
+  <div class="input-group mb-1">
     <div class="input-group-text">
-      <input type="checkbox" class="form-check-input mt-0" :id="name" :value="value" :checked="checked" @click='statChange($event.target.value)'>
+      <input
+        type="checkbox"
+        class="form-check-input mt-0"
+        :id="name"
+        :value="value"
+        v-model="checked"
+        @change="statChange"
+      />
     </div>
-      <label class="form-control" :for="name"> {{name}} </label>
-      <button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" :title="tooltip">?</button>
-
-</div>
+    <label class="form-control" :for="name">{{ name }}</label>
+    <button type="button" class="btn btn-outline-secondary" data-toggle="tooltip" :title="tooltip">
+      ?
+    </button>
+  </div>
 </template>
 
 <script>
+import { ref, computed, watch } from 'vue'
+import { useCharacterStore } from '../stores/characterStore'
+
 export default {
   props: {
     name: String,
     value: Number,
-    upRef: Number,
     advantage: Boolean,
-    chosen: Boolean
+    chosen: Boolean,
   },
-  created () {
 
-  },
-  computed: {
-    tooltip () {
-      return this.$props.advantage ? (this.$props.name + ' koster ' + this.$props.value + ' UP') : (this.$props.name + ' giver ' + this.$props.value + ' UP')
-    }
-  },
-  methods: {
-    statChange (value) {
-      var sendValue = this.value
-      if (this.advantage) {
-        sendValue = -sendValue
-      }
+  setup(props) {
+    const characterStore = useCharacterStore()
+    const checked = ref(props.chosen || false)
 
-      if (this.checked) {
-        this.$emit('modifyUP', parseInt(-sendValue))
-      } else {
-        this.$emit('modifyUP', parseInt(sendValue))
-      }
-      this.checked = !this.checked
-      console.log('checkked' + sendValue)
+    watch(
+      () => props.chosen,
+      (newVal) => {
+        checked.value = newVal
+      },
+    )
+
+    const tooltip = computed(() => {
+      return props.advantage
+        ? `${props.name} koster ${props.value} UP`
+        : `${props.name} giver ${props.value} UP`
+    })
+
+    const statChange = () => {
+      characterStore.toggleAdvantage(props.name)
     }
-  },
-  data () {
+
     return {
-      checked: false
+      checked,
+      tooltip,
+      statChange,
+      characterStore,
     }
-  }
+  },
 }
-
 </script>
 
-<style>
-
-</style>
+<style></style>

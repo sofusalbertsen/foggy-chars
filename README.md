@@ -1,5 +1,6 @@
 # foggy-chars
 Taagedal game system character builder
+For more info, visit the [pen-and-paper-website](https://tågedal.dk/index.php/Forside)
 
 
 ## Char creation steps

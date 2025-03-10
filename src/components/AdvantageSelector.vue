@@ -21,6 +21,7 @@
           :value="option.cost"
           :advantage="!isDisadvantage"
           :chosen="true"
+          :description="option.description"
         />
       </div>
     </div>
@@ -34,6 +35,7 @@
           :value="option.cost"
           :advantage="!isDisadvantage"
           :chosen="false"
+          :description="option.description"
         />
       </div>
     </div>

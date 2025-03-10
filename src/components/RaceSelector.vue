@@ -3,7 +3,20 @@
     <div class="card">
       <div class="card-header">Race</div>
       <div class="card-body">
-        <div class="race-selector">
+        <!-- Display mode -->
+        <div v-if="!editMode && selectedRace" class="race-display">
+          <span class="selected-race">{{ selectedRace }}</span>
+          <button
+            @click="toggleEditMode"
+            class="btn btn-sm btn-outline-secondary edit-button"
+            title="Edit race"
+          >
+            <i class="fas fa-pen"></i> Edit
+          </button>
+        </div>
+
+        <!-- Edit mode -->
+        <div v-if="editMode || !selectedRace" class="race-selector">
           <div class="form-group">
             <label for="race-category">Category:</label>
             <select id="race-category" v-model="selectedCategory" class="form-control mb-2">
@@ -31,6 +44,10 @@
           <div v-if="showDescription" class="mt-3 race-description">
             <p>{{ description }}</p>
           </div>
+
+          <div v-if="selectedRace" class="mt-3 text-end">
+            <button @click="toggleEditMode" class="btn btn-sm btn-primary">Done</button>
+          </div>
         </div>
       </div>
     </div>
@@ -48,6 +65,11 @@ export default {
     const races = getRaces()
     const selectedCategory = ref('pc')
     const selectedRace = ref('')
+    const editMode = ref(!selectedRace.value)
+
+    const toggleEditMode = () => {
+      editMode.value = !editMode.value
+    }
 
     const categories = computed(() => [
       { id: 'pc', name: 'PC Races' },
@@ -82,6 +104,8 @@ export default {
       currentRaces,
       description,
       showDescription,
+      editMode,
+      toggleEditMode,
     }
   },
 }
@@ -98,5 +122,17 @@ export default {
   padding: 10px;
   border-radius: 4px;
   border-left: 3px solid #ddd;
+}
+.race-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.selected-race {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+.edit-button {
+  padding: 0.25rem 0.5rem;
 }
 </style>

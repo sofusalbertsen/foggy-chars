@@ -6,16 +6,18 @@
     </div>
     <div class="row mb-3">
       <Freetext fieldname="Character Name" />
-      <RaceSelector />
       <Freetext fieldname="Occupation" />
       <Freetext fieldname="Age" />
     </div>
     <div class="row mb-3">
-      <div class="col-md-8">
-        <div class="row">
-          <Stat v-for="stat in characterStore.stats" :key="stat.name" :stat="stat" />
-        </div>
+      <RaceSelector />
+    </div>
+    <div class="col-md">
+      <div class="row">
+        <Stat v-for="stat in characterStore.stats" :key="stat.name" :stat="stat" />
       </div>
+    </div>
+    <div class="row mb-3">
       <div class="col-md-4">
         <div class="row">
           <div class="col-12 mb-3">

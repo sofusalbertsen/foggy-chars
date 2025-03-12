@@ -1,5 +1,5 @@
 <template>
-  <div class="col-md-6 mb-3">
+  <div class="col-md mb-3">
     <div class="card">
       <div class="card-header">Race</div>
       <div class="card-body">

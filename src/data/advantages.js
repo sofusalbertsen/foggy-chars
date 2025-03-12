@@ -1717,7 +1717,7 @@ export const advantages = [
   },
   {
     name: 'Berygtet',
-    cost: '3 til 7',
+    cost: 6, //'3 til 7',
     advantage: false,
     category: advantageCategories.STANDARD,
     description:
@@ -1725,7 +1725,7 @@ export const advantages = [
   },
   {
     name: 'Fobi',
-    cost: '5 til 9',
+    cost: 8, //'5 til 9',
     advantage: false,
     category: advantageCategories.STANDARD,
     description:
@@ -1781,7 +1781,7 @@ export const advantages = [
   },
   {
     name: 'Gammel',
-    cost: '15- til 25 kXP bestemt af start-lvl',
+    cost: 6, //'15- til 25 kXP bestemt af start-lvl',
     advantage: false,
     category: advantageCategories.STANDARD,
     description:

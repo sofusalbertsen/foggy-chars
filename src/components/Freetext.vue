@@ -1,5 +1,5 @@
 <template>
-  <div class="col-sm-6">
+  <div class="col-sm-4">
     <label :for="fieldname" class="form-label">{{ fieldname }}</label>
     <input
       type="text"

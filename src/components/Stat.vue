@@ -1,6 +1,6 @@
 <template>
-  <div class="col-md-2">
-    <div class="input-group mb-3">
+  <div class="col">
+    <div class="input-group">
       <div class="input-group-prepend">
         <span class="input-group-text" id="inputGroup-sizing-default" :title="stat.longName">
           {{ stat.name }}</span

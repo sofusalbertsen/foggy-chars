@@ -170,8 +170,11 @@ export const useCharacterStore = defineStore('character', {
       if (existingIndex !== -1) {
         // Already selected, so remove it
         const advantage = this.selectedAdvantages[existingIndex]
-        const pointChange = advantage.advantage ? -advantage.cost : advantage.cost
-        this.modifyUP(-pointChange)
+
+        const pointChange = -advantage.cost
+
+        this.modifyUP(pointChange)
+
         this.selectedAdvantages.splice(existingIndex, 1)
         this.updateStatsFromAdvantages()
       } else {
@@ -193,7 +196,7 @@ export const useCharacterStore = defineStore('character', {
               chosen: true,
             })
 
-            const pointChange = advantage.advantage ? advantage.cost : -advantage.cost
+            const pointChange = advantage.cost
             this.modifyUP(pointChange)
             this.updateStatsFromAdvantages()
           }

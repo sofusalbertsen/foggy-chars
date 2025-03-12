@@ -1,6 +1,11 @@
 <template>
   <div class="container">
     <h1>Character Sheet</h1>
+    <!-- Button to toggle off-canvas -->
+    <button class="btn btn-primary mb-3" type="button" @click="toggleOffcanvas">
+      Toggle Character Stats
+    </button>
+
     <div class="row mb-3">
       <Up />
     </div>
@@ -17,24 +22,29 @@
         <Stat v-for="stat in characterStore.stats" :key="stat.name" :stat="stat" />
       </div>
     </div>
-    <div class="row mb-3">
-      <div class="col-md-4">
-        <div class="row">
-          <div class="col-12 mb-3">
-            <div class="card">
-              <div class="card-header">Character Stats</div>
-              <div class="card-body">
-                <div class="row">
-                  <div class="col">HP:</div>
-                  <div class="col"><Hp /></div>
-                </div>
-              </div>
+
+    <!-- Off-canvas panel for Character Stats and Initiative -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="statsOffcanvas" ref="offcanvas">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Character Details</h5>
+        <button
+          type="button"
+          class="btn-close"
+          @click="toggleOffcanvas"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="offcanvas-body">
+        <div class="card mb-3">
+          <div class="card-header">Character Stats</div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col">HP:</div>
+              <div class="col"><Hp /></div>
             </div>
           </div>
-          <div class="col-12">
-            <Initiative />
-          </div>
         </div>
+        <Initiative />
       </div>
     </div>
 
@@ -67,7 +77,7 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useCharacterStore } from './stores/characterStore'
 import { getStandardAdvantages, getSpecialAdvantages } from './data/advantages'
 import Up from './components/Up.vue'
@@ -91,6 +101,16 @@ export default {
 
   setup() {
     const characterStore = useCharacterStore()
+    const offcanvas = ref(null)
+
+    const toggleOffcanvas = () => {
+      const offcanvasEl = document.getElementById('statsOffcanvas')
+      if (offcanvasEl.classList.contains('show')) {
+        offcanvasEl.classList.remove('show')
+      } else {
+        offcanvasEl.classList.add('show')
+      }
+    }
 
     const standardAdvantages = computed(() => {
       return getStandardAdvantages().filter((adv) => adv.advantage)
@@ -109,6 +129,8 @@ export default {
       standardAdvantages,
       standardDisadvantages,
       specialAdvantages,
+      offcanvas,
+      toggleOffcanvas,
     }
   },
 }
@@ -215,5 +237,45 @@ h1 {
 
 .advantage-selector .options li:last-child {
   border-bottom: none;
+}
+
+/* Off-canvas styles */
+.offcanvas {
+  position: fixed;
+  top: 0;
+  right: -320px;
+  height: 100vh;
+  width: 320px;
+  background-color: white;
+  transition: transform 0.3s ease-in-out;
+  z-index: 1050;
+  overflow-y: auto;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.offcanvas.show {
+  transform: translateX(-320px);
+}
+
+.offcanvas-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.offcanvas-body {
+  padding: 1rem;
+}
+.btn-close {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.btn-close:focus {
+  outline: none;
 }
 </style>
